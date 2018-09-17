@@ -8,4 +8,4 @@
 5. Navigate to the project's folder in the terminal
 6. Run 'pip install -r requirements.txt'
 7. Open PyCharm and run 'main.py'
-8. Vindow with plots should appear on the screen
+8. Window with plots should appear on the screen
