@@ -111,3 +111,10 @@ app = Application()
 app.run()
 
 
+
+
+
+
+
+# If you put root.destroy() here, it will cause an error if the window is
+# closed with the window manager.
