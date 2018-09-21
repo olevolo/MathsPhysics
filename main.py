@@ -94,7 +94,8 @@ class Application:
                         # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 
     def triangulate(self):
-        self.B = triangle.triangulate(self.A)
+        print(f'q{self.angle if self.angle else ""}')
+        self.B = triangle.triangulate(self.A, f'q{self.angle if self.angle else ""}') # a{self.area if self.area else ""}'
         plot.plot(plt, self.B)
         self.canvas.draw()
 
