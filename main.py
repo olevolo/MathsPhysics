@@ -31,7 +31,6 @@ class Application:
 
         self.text_frame = Tk.Frame(master=self.root)
         self.text = Tk.Text(self.text_frame)
-        self.text.
         self.text_scrollbar = Tk.Scrollbar(self.text_frame)
         self.text.config(yscrollcommand=self.text_scrollbar.set)
         self.text.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
