@@ -16,7 +16,6 @@ import tkinter as Tk
 from tkinter import filedialog, messagebox
 
 
-
 import json
 import numpy as np
 import matplotlib.pyplot as plt
@@ -32,6 +31,7 @@ class Application:
 
         self.text_frame = Tk.Frame(master=self.root)
         self.text = Tk.Text(self.text_frame)
+        self.text.
         self.text_scrollbar = Tk.Scrollbar(self.text_frame)
         self.text.config(yscrollcommand=self.text_scrollbar.set)
         self.text.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
@@ -66,6 +66,7 @@ class Application:
         self.points = None
         self.segments = None
         self.data = None
+        self.holes = None
 
     def read_data(self):
         with open(self.filepath) as f:
@@ -73,17 +74,31 @@ class Application:
 
     def load_data(self):
         self.filepath = Tk.filedialog.askopenfilename(title="Select file", filetypes=(("json files", "*.json"), ("all files", "*.*")))
-        if self.filepath != None:
-            self.data = self.read_data()
-            self.angle = self.data['angle']
-            self.area = self.data['area']
-            self.points = np.array([(point['x'], point['y']) for point in self.data['points']])
+        if self.filepath is not None:
+            self.fig.clear()
 
+            self.data = self.read_data()
+            self.angle = self.data.get('angle')
+            self.area = self.data.get('area')
+            self.holes = self.data.get('holes')
+            self.points = self.data['points']
+
+
+            self.text.delete('1.0', Tk.END)
             pretty_data = pprint.pformat(self.data)
             self.text.insert(Tk.END, pretty_data)
 
-            self.segments = triangle.convex_hull(self.points)
-            self.A = dict(vertices=self.points, segments=self.segments)  # , labels=['1', '2', '3', '4'])
+            self.segments = [[i, (i+1) % len(self.points)] for i in range(len(self.points))]
+
+            self.A = {
+                'vertices': np.array([(point['x'], point['y']) for point in self.data['points']]),
+                'segments': np.array(self.segments)
+            }
+
+            if self.holes:
+                self.A['holes'] = np.array(self.holes)
+
+
 
             plot.plot(plt, self.A)
             self.canvas.draw()
@@ -94,8 +109,9 @@ class Application:
                         # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 
     def triangulate(self):
-        print(f'q{self.angle if self.angle else ""}')
-        self.B = triangle.triangulate(self.A, f'q{self.angle if self.angle else ""}') # a{self.area if self.area else ""}'
+        self.B = triangle.triangulate(
+            self.A,
+            f'pq{self.angle if self.angle else ""}a{self.area if self.area else ""}')
         plot.plot(plt, self.B)
         self.canvas.draw()
 
