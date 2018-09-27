@@ -28,7 +28,7 @@ def vertices(ax, **kw):
     ax.scatter(*verts.T, color='k')
     if 'labels' in kw:
         for i in range(verts.shape[0]):
-            ax.text(verts[i, 0], verts[i, 1], str(i))
+            ax.text(verts[i, 0], verts[i, 1], str(i), fontsize=10, color='red')
     if 'markers' in kw:
         vm = kw['vertex_markers']
         for i in range(verts.shape[0]):
@@ -44,9 +44,28 @@ def segments(ax, **kw):
         ax.fill([x0, x1], [y0, y1], color='k', linestyle='-', linewidth=1)
 
 
+def _number_triangle(ax, triangle, vertices, number):
+    xs = [vertices[i][0] for i in triangle]
+    print(xs)
+    ys = [vertices[i][1] for i in triangle]
+    print(ys)
+    min_x = min(xs)
+    max_x = max(xs)
+
+    min_y = min(ys)
+    max_y = max(ys)
+
+    ax.text((min_x+max_x)/2, (min_y+max_y)/2, str(number))
+
+
+
+
 def triangles(ax, **kw):
     verts = kw['vertices']
     ax.triplot(verts[:, 0], verts[:, 1], kw['triangles'], marker='o', color='k', linestyle='-', linewidth=1)
+    if kw.get('number_triangles'):
+        for i, triangle in enumerate(kw['triangles']):
+            _number_triangle(ax, triangle, verts, i)
 
 
 def holes(ax, **kw):

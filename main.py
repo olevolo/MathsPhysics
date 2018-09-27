@@ -22,6 +22,14 @@ import matplotlib.pyplot as plt
 import pprint
 import triangle
 import plot
+import math
+
+
+def distance(a, b):
+    return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
+
+def is_between(a, c, b):
+    return math.isclose(distance(a, c) + distance(c, b), distance(a, b))
 
 
 class Application:
@@ -38,7 +46,7 @@ class Application:
         self.text_scrollbar.pack(side=Tk.RIGHT, fill=Tk.Y)
 
 
-        self.fig = plt.figure(figsize=(5, 4), dpi=100)
+        self.fig = plt.figure()#(dpi=100) # figsize=(5, 4),
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)  # A tk.DrawingArea.
         self.canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1) # canvas.draw()
         self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.root)
@@ -63,9 +71,11 @@ class Application:
         self.angle = None
         self.area = None
         self.points = None
-        self.boundary_segments = None
+        self.segments = None
         self.data = None
         self.holes = None
+        self.labels = False
+        self.number_triangles = False
 
     def read_data(self):
         with open(self.filepath) as f:
@@ -80,23 +90,27 @@ class Application:
             # read data
             self.data = self.read_data()
             self.angle = self.data.get('angle')
-            self.angle = 0 if self.angle > 17.5 else self.angle  # check if angle is bad for triangulation algorithm
             self.area = self.data.get('area')
             self.holes = self.data.get('holes')
             self.points = self.data['points']
+            self.labels = True if self.data.get('labels') else False
+            self.number_triangles = True if self.data.get('number_triangles') else False
 
             # display data in the text field
             self._print_info(self.data)
 
 
-            # get boundary elements
-            self.boundary_segments = [[i, (i+1) % len(self.points)] for i in range(len(self.points))]
+            # get elements
+            self.segments = [[i, (i+1) % len(self.points)] for i in range(len(self.points))]
 
             # declare dict that 'triangle' library require for triangulation
             self.A = {
                 'vertices': np.array([(point['x'], point['y']) for point in self.data['points']]),
-                'segments': np.array(self.boundary_segments)
+                'segments': np.array(self.segments)
             }
+
+            if self.labels:
+                self.A['labels'] = self.labels
 
             # if holes are specified add them to dict
             if self.holes:
@@ -121,11 +135,51 @@ class Application:
 
         self.B = triangle.triangulate(
             self.A,
-            f'pq{self.angle if self.angle else ""}a{self.area if self.area else ""}')
-        b_info = {key: value.tolist() if isinstance(value, np.ndarray) else value for key,value in self.B.items()}
-        self._print_info(json.dumps(b_info))
+            f'pq{self.angle if self.angle else ""}a{self.area if self.area else ""}'
+        )
+
+        if self.labels:
+            self.B['labels'] = self.labels
+        if self.number_triangles:
+            self.B['number_triangles'] = True
+
+        raw_info = {key: value.tolist() if isinstance(value, np.ndarray) else value for key,value in self.B.items()}
+
+        info = {
+            'CT': raw_info['vertices'],
+            'NT':raw_info['triangles'],
+            'NTG':[self._boundary_segments(segment, raw_info['vertices']) for segment in self.segments]
+        }
+
+        # print('-'*100)
+        # print([self._boundary_segments(segment, raw_info['vertices']) for segment in self.segments])
+        # print('-' * 100)
+
+        self._print_info(info) #json.dumps(b_info)
         plot.plot(plt, self.B)
         self.canvas.draw()
+
+    def _boundary_segments(self, parent_segment, vertices):
+        a, b = vertices[parent_segment[0]][0], vertices[parent_segment[1]][0]
+        c, d = vertices[parent_segment[0]][1], vertices[parent_segment[1]][1]
+        a, b = (a, b) if a<b else (b, a)
+        c, d = (c, d) if c<d else (d, c)
+        suspicious_points = []
+        for i in range(len(vertices)):
+            if a <= vertices[i][0] <= b and c <= vertices[i][1] <= d:
+                suspicious_points.append(i)
+
+        segment_points = []
+        for i in suspicious_points:
+            if is_between(vertices[parent_segment[0]], vertices[i],vertices[parent_segment[1]]):
+                segment_points.append(i)
+        return segment_points
+
+
+
+
+
+
 
     def compare(self):
         plot.compare(plt, self.A, self.B)
