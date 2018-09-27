@@ -28,7 +28,7 @@ def vertices(ax, **kw):
     ax.scatter(*verts.T, color='k')
     if 'labels' in kw:
         for i in range(verts.shape[0]):
-            ax.text(verts[i, 0], verts[i, 1], str(i), fontsize=10, color='red')
+            ax.annotate(str(i), (verts[i, 0], verts[i, 1]) , fontsize=10, color='red')
     if 'markers' in kw:
         vm = kw['vertex_markers']
         for i in range(verts.shape[0]):
@@ -55,7 +55,7 @@ def _number_triangle(ax, triangle, vertices, number):
     min_y = min(ys)
     max_y = max(ys)
 
-    ax.text((min_x+max_x)/2, (min_y+max_y)/2, str(number))
+    ax.annotate(str(number), ((min_x+max_x)/2, (min_y+max_y)/2) )
 
 
 

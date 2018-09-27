@@ -1,6 +1,8 @@
 {
-  "angle": 30,
-  "area": 30,
+  "angle": 35,
+  "area": 0.05,
+  "labels": true,
+  "number_triangles": true,
   "points": [
     {"x": -3, "y": 0},
     {"x": -1, "y": 0},
