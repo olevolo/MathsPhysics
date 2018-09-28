@@ -1,8 +1,8 @@
 {
-  "angle": 35,
-  "area": 0.05,
-  "labels": true,
-  "number_triangles": true,
+  "min_angle": 35,
+  "max_area": 0.05,
+  "label_vertices": true,
+  "label_triangles": true,
   "points": [
     {"x": 0, "y": 0},
     {"x": 1, "y": 0},
