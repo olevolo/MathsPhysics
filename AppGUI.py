@@ -52,13 +52,93 @@ class AppGUI:
         self.filemenu.add_command(label="Load data", command=self._load_data)
         self.filemenu.add_command(label="Triangulate", command=self._triangulate)
         self.filemenu.add_command(label="Compare", command=self._compare)
+        self.filemenu.add_command(label="Set conditions", command=self._ask_conds)
+        self.filemenu.add_command(label="Solve", command=lambda: None)  # Do nothing
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Quit", command=self._quit)
         self.menubar.add_cascade(label="Menu", menu=self.filemenu)
         self.root.config(menu=self.menubar)
+
+        # conditions window
+        self.cond_window = None
         # ============================================================
 
         self.delaunay_triangulation = None
+        self.entries = None
+        self.fem_solver = None
+
+    def _ask_conds(self):
+        # create a child window
+        self.cond_window = Tk.Toplevel()
+        self.entries = self._makeform()
+        Tk.Button(self.cond_window, text="Apply", command=self._consume_entries).pack()
+
+    def _consume_entries(self):
+        fields = ['Beta', 'Sigma', 'Uc']
+        for key in self.entries:
+            if key in self.delaunay_triangulation.triangulated_info['NTG']:
+                for sub_key in fields:
+                    self.entries[key][sub_key] = float(self.entries[key][sub_key].get())
+            else:
+                self.entries[key] = float(self.entries[key].get())
+        pprint.pprint(self.entries)
+        self.cond_window.destroy()
+
+    def _makeform(self):
+        entries = {}
+
+        a_row = Tk.Frame(self.cond_window)
+        Tk.Label(a_row, width=22, text='a11 :', anchor='w').pack(side=Tk.LEFT)
+        a11_ent = Tk.Entry(a_row)
+        a11_ent.insert(0, "0")
+        a11_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
+        Tk.Label(a_row, width=22, text='a22 :', anchor='w').pack(side=Tk.LEFT)
+        a22_ent = Tk.Entry(a_row)
+        a22_ent.insert(0, "0")
+        a22_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
+        a_row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
+
+        entries['a11'] = a11_ent
+        entries['a22'] = a22_ent
+
+        fd_row = Tk.Frame(self.cond_window)
+        Tk.Label(fd_row, width=22, text='f :', anchor='w').pack(side=Tk.LEFT)
+        f_ent = Tk.Entry(fd_row)
+        f_ent.insert(0, "0")
+        f_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
+        Tk.Label(fd_row, width=22, text='d :', anchor='w').pack(side=Tk.LEFT)
+        d_ent = Tk.Entry(fd_row)
+        d_ent.insert(0, "0")
+        d_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
+        fd_row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
+
+        entries['f'] = f_ent
+        entries['d'] = d_ent
+
+        row = Tk.Frame(self.cond_window)
+        fields = ['Beta', 'Sigma', 'Uc']
+        Tk.Label(row, width=22, text='Boundaries', anchor='w').pack(side=Tk.LEFT)
+        Tk.Label(row, width=22, text=fields[0], anchor='w').pack(side=Tk.LEFT)
+        Tk.Label(row, width=22, text=fields[1], anchor='w').pack(side=Tk.LEFT)
+        Tk.Label(row, width=22, text=fields[2], anchor='w').pack(side=Tk.LEFT)
+        row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
+
+        for boundary in self.delaunay_triangulation.triangulated_info['NTG']:
+            row = Tk.Frame(self.cond_window)
+            lab = Tk.Label(row, width=22, text=str(boundary) + ": ", anchor='w')
+            lab.pack(side=Tk.LEFT)
+
+            params = {}
+            for key in fields:
+                ent = Tk.Entry(row)
+                ent.insert(0, "0")
+                ent.pack(side=Tk.RIGHT, expand=Tk.YES, fill=Tk.X)
+                params[key] = ent
+
+            row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
+            entries[boundary] = params
+
+        return entries
 
     def _load_data(self):
         # open file dialog
