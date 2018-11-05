@@ -11,3 +11,13 @@ def read_json(filepath):
     with open(filepath) as f:
         return json.load(f)
 
+def tri_area(triangle):
+    a = distance(triangle[0], triangle[1])
+    b = distance(triangle[1], triangle[2])
+    c = distance(triangle[2], triangle[0])
+
+    p = (a + b + c) / 2
+
+    return math.sqrt(p*(p-a)*(p-b)*(p-c))
+
+

@@ -1,5 +1,5 @@
 {
-  "min_angle": 35,
+  "min_angle": 40,
   "max_area": 0.05,
   "label_vertices": true,
   "label_triangles": true,

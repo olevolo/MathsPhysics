@@ -4,6 +4,7 @@ Embedding In Tk
 ===============
 
 """
+import json
 
 from six.moves import tkinter as Tk
 
@@ -22,6 +23,7 @@ import pprint
 import plot
 from helpers import read_json
 from DelaunayTriangulation import DelaunayTriangulation
+from fem_solver import FemSolver
 
 
 class AppGUI:
@@ -53,7 +55,7 @@ class AppGUI:
         self.filemenu.add_command(label="Triangulate", command=self._triangulate)
         self.filemenu.add_command(label="Compare", command=self._compare)
         self.filemenu.add_command(label="Set conditions", command=self._ask_conds)
-        self.filemenu.add_command(label="Solve", command=lambda: None)  # Do nothing
+        self.filemenu.add_command(label="Solve", command=self._solve)  # Do nothing
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Quit", command=self._quit)
         self.menubar.add_cascade(label="Menu", menu=self.filemenu)
@@ -66,6 +68,26 @@ class AppGUI:
         self.delaunay_triangulation = None
         self.entries = None
         self.fem_solver = None
+        self.solver = None
+
+    def _solve(self):
+        self.solver = FemSolver(self.delaunay_triangulation.triangulated_info, self.entries)
+        self.solver.prepare_matrices()
+        print('='*100)
+        pprint.pprint(self.solver.element_matrices)
+        filename = 'matrices.json'
+        data = {}
+        for key in self.solver.element_matrices:
+            inner_data = {}
+            for subkey in self.solver.element_matrices[key]:
+                inner_data[subkey] = self.solver.element_matrices[key][subkey].tolist()
+            data[key] = inner_data
+
+        self._write(filename, data)
+
+    def _write(self, filename, data):
+        with open(filename, 'w') as outfile:
+            json.dump(data, outfile)
 
     def _ask_conds(self):
         # create a child window
@@ -90,11 +112,11 @@ class AppGUI:
         a_row = Tk.Frame(self.cond_window)
         Tk.Label(a_row, width=22, text='a11 :', anchor='w').pack(side=Tk.LEFT)
         a11_ent = Tk.Entry(a_row)
-        a11_ent.insert(0, "0")
+        a11_ent.insert(0, "1")
         a11_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         Tk.Label(a_row, width=22, text='a22 :', anchor='w').pack(side=Tk.LEFT)
         a22_ent = Tk.Entry(a_row)
-        a22_ent.insert(0, "0")
+        a22_ent.insert(0, "1")
         a22_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         a_row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
 
@@ -104,11 +126,11 @@ class AppGUI:
         fd_row = Tk.Frame(self.cond_window)
         Tk.Label(fd_row, width=22, text='f :', anchor='w').pack(side=Tk.LEFT)
         f_ent = Tk.Entry(fd_row)
-        f_ent.insert(0, "0")
+        f_ent.insert(0, "1")
         f_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         Tk.Label(fd_row, width=22, text='d :', anchor='w').pack(side=Tk.LEFT)
         d_ent = Tk.Entry(fd_row)
-        d_ent.insert(0, "0")
+        d_ent.insert(0, "1")
         d_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         fd_row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
 
@@ -131,7 +153,7 @@ class AppGUI:
             params = {}
             for key in fields:
                 ent = Tk.Entry(row)
-                ent.insert(0, "0")
+                ent.insert(0, "1")
                 ent.pack(side=Tk.RIGHT, expand=Tk.YES, fill=Tk.X)
                 params[key] = ent
 
@@ -158,7 +180,11 @@ class AppGUI:
 
     def _triangulate(self):
         self.delaunay_triangulation.triangulate()
+        print('+++++++++++++++++++++++++++++++++')
+        print(self.delaunay_triangulation.triangulated)
         self._print_info(self.delaunay_triangulation.triangulated_info)
+        print('+++++++++++++++++++++++++++++++++')
+        print(self.delaunay_triangulation.triangulated_info)
         plot.plot(plt, self.delaunay_triangulation.triangulated)
         self.canvas.draw()
 
