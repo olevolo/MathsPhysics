@@ -73,8 +73,17 @@ class AppGUI:
     def _solve(self):
         self.solver = FemSolver(self.delaunay_triangulation.triangulated_info, self.entries)
         self.solver.prepare_matrices()
+        self.solver.form_SofLE()
         print('='*100)
         pprint.pprint(self.solver.element_matrices)
+        print('-' * 100)
+        pprint.pprint(self.solver.boundary_matrices)
+        print('-' * 100)
+        pprint.pprint(self.solver.K)
+        print('-' * 100)
+        pprint.pprint(self.solver.F)
+        print('-' * 100)
+        pprint.pprint(np.linalg.solve(self.solver.K, self.solver.F))
         filename = 'matrices.json'
         data = {}
         for key in self.solver.element_matrices:
@@ -104,7 +113,7 @@ class AppGUI:
             else:
                 self.entries[key] = float(self.entries[key].get())
         pprint.pprint(self.entries)
-        self.cond_window.destroy()
+        #self.cond_window.destroy()
 
     def _makeform(self):
         entries = {}
@@ -154,7 +163,7 @@ class AppGUI:
             for key in fields:
                 ent = Tk.Entry(row)
                 ent.insert(0, "1")
-                ent.pack(side=Tk.RIGHT, expand=Tk.YES, fill=Tk.X)
+                ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
                 params[key] = ent
 
             row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
