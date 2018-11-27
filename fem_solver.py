@@ -29,7 +29,7 @@ class FemSolver:
             Ce = self.boundary_matrices[boundary]['Ce']
             for i in range(2):
                 for j in range(2):
-                    self.K[boundary[i], boundary[j]] += Be[i, j]
+                    self.K[boundary[i], boundary[j]] -= Be[i, j]
                 self.F[boundary[i], 0] += Ce[i, 0]
 
 
@@ -109,7 +109,7 @@ class FemSolver:
         sigma = self.conds[boundary]['Sigma']
         beta = self.conds[boundary]['Beta']
         gamma = distance(side[0], side[1])
-        return -np.array(
+        return -1*np.array(
             [
                 [2,1],
                 [1,2]

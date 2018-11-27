@@ -24,6 +24,8 @@ import plot
 from helpers import read_json
 from DelaunayTriangulation import DelaunayTriangulation
 from fem_solver import FemSolver
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
 
 
 class AppGUI:
@@ -100,18 +102,44 @@ class AppGUI:
         self._write(filename, data)
         self._3Dplot()
 
+    def getRandomColor(self):
+        return (np.random.choice(range(2, 9), size=3) / 10)
+
+
     def _3Dplot(self):
-        self.x_vertices = [point[0] for point in self.delaunay_triangulation.triangulated_info['CT']]
-        self.y_vertices = [point[1] for point in self.delaunay_triangulation.triangulated_info['CT']]
-
         fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        ax = fig.gca(projection='3d')
 
-        self.x_vertices, self.y_vertices = np.meshgrid(self.x_vertices, self.y_vertices)
-        z = np.array(self.solution)
+        tmp = np.array([[0,0,0]])
+        for idx, tri in enumerate(self.solver.triangulated_info['NT']):
+            triangle = self.solver.triangulated_info['NT'][idx]
+            verts = np.array([
+                [self.solver.triangulated_info['CT'][triangle[0]][0], self.solver.triangulated_info['CT'][triangle[0]][1], self.solution[triangle[0], 0]],
+                [self.solver.triangulated_info['CT'][triangle[1]][0], self.solver.triangulated_info['CT'][triangle[1]][1], self.solution[triangle[1], 0]],
+                [self.solver.triangulated_info['CT'][triangle[2]][0],self.solver.triangulated_info['CT'][triangle[2]][1], self.solution[triangle[2], 0]]
 
-        ax.plot_surface(self.x_vertices, self.y_vertices, z)
+            ])
+            ax.add_collection3d(Poly3DCollection([verts.tolist()], facecolors=np.append(self.getRandomColor(),0.25), linewidths=1, edgecolor="k"))
+            tmp = np.vstack((tmp, verts))
+
+        ax.scatter(tmp[1:, 0], tmp[1:, 1], tmp[1:, 2], c='k', marker='o')
+
+        ax.set_xlim3d(np.min(tmp[:, 0]), np.max(tmp[:, 0]))
+        ax.set_ylim3d(np.min(tmp[:, 1]), np.max(tmp[:, 1]))
+        ax.set_zlim3d(np.min(tmp[:, 2])-1, np.max(tmp[:, 2])+1)
         plt.show()
+
+        # self.x_vertices = [point[0] for point in self.delaunay_triangulation.triangulated_info['CT']]
+        # self.y_vertices = [point[1] for point in self.delaunay_triangulation.triangulated_info['CT']]
+        #
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111, projection='3d')
+        #
+        # self.x_vertices, self.y_vertices = np.meshgrid(self.x_vertices, self.y_vertices)
+        # z = np.array(self.solution)
+        #
+        # ax.plot_surface(self.x_vertices, self.y_vertices, z)
+        # plt.show()
 
 
     def _write(self, filename, data):
@@ -133,7 +161,7 @@ class AppGUI:
             else:
                 self.entries[key] = float(self.entries[key].get())
         pprint.pprint(self.entries)
-        #self.cond_window.destroy()
+        self.cond_window.destroy()
 
     def _makeform(self):
         entries = {}
