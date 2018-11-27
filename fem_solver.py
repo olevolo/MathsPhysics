@@ -22,7 +22,7 @@ class FemSolver:
             for i in range(3):
                 for j in range(3):
                     self.K[mapping_element_vertices[i], mapping_element_vertices[j]] += Ke[i, j] + Me[i, j]
-                self.F[mapping_element_vertices[i], 0] = Qe[i, 0]
+                self.F[mapping_element_vertices[i], 0] += Qe[i, 0]
 
         for boundary in self.boundary_matrices:
             Be = self.boundary_matrices[boundary]['Be']
@@ -52,7 +52,7 @@ class FemSolver:
                 }
 
     def _get_Ke(self, triangle):
-        delta = tri_area(triangle)
+        delta = 2 * tri_area(triangle)
         a11 = self.conds['a11']
         a22 = self.conds['a22']
         coeffs = np.vstack((self._get_coeffs(triangle, 0),
@@ -75,7 +75,7 @@ class FemSolver:
 
 
     def _get_Me(self, triangle):
-        delta = tri_area(triangle)
+        delta = 2 * tri_area(triangle)
         d = self.conds['d']
         return np.array(
             [
@@ -85,7 +85,7 @@ class FemSolver:
             ]) * d * delta / 24
 
     def _get_Qe(self, triangle):
-        delta = tri_area(triangle)
+        delta = 2 * tri_area(triangle)
         f = self.conds['f']
         return np.dot(
             np.array(

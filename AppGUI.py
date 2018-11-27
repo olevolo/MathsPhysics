@@ -5,14 +5,14 @@ Embedding In Tk
 
 """
 import json
+import math
 
 from six.moves import tkinter as Tk
 
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2TkAgg)
-# Implement the default Matplotlib key bindings.
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
 import tkinter as Tk
 from tkinter import filedialog, messagebox
 
@@ -69,6 +69,9 @@ class AppGUI:
         self.entries = None
         self.fem_solver = None
         self.solver = None
+        self.solution = None
+        self.x_vertices = None
+        self.y_vertices = None
 
     def _solve(self):
         self.solver = FemSolver(self.delaunay_triangulation.triangulated_info, self.entries)
@@ -79,11 +82,13 @@ class AppGUI:
         print('-' * 100)
         pprint.pprint(self.solver.boundary_matrices)
         print('-' * 100)
-        pprint.pprint(self.solver.K)
+        #pprint.pprint(self.solver.K)
+        print('\n'.join(['\t\t'.join([str(cell) for cell in row]) for row in self.solver.K.round(3)]))
         print('-' * 100)
         pprint.pprint(self.solver.F)
         print('-' * 100)
-        pprint.pprint(np.linalg.solve(self.solver.K, self.solver.F))
+        self.solution = np.linalg.solve(self.solver.K, self.solver.F)
+        pprint.pprint(self.solution)
         filename = 'matrices.json'
         data = {}
         for key in self.solver.element_matrices:
@@ -93,6 +98,21 @@ class AppGUI:
             data[key] = inner_data
 
         self._write(filename, data)
+        self._3Dplot()
+
+    def _3Dplot(self):
+        self.x_vertices = [point[0] for point in self.delaunay_triangulation.triangulated_info['CT']]
+        self.y_vertices = [point[1] for point in self.delaunay_triangulation.triangulated_info['CT']]
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        self.x_vertices, self.y_vertices = np.meshgrid(self.x_vertices, self.y_vertices)
+        z = np.array(self.solution)
+
+        ax.plot_surface(self.x_vertices, self.y_vertices, z)
+        plt.show()
+
 
     def _write(self, filename, data):
         with open(filename, 'w') as outfile:
