@@ -1,6 +1,6 @@
 {
   "min_angle": 20,
-  "max_area": 0.05,
+  "max_area": 0.00005,
   "label_vertices": true,
   "label_triangles": true,
   "points": [

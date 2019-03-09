@@ -75,6 +75,9 @@ class AppGUI:
         self.x_vertices = None
         self.y_vertices = None
 
+        # =============================================================
+        self.tester = None
+
     def _solve(self):
         self.solver = FemSolver(self.delaunay_triangulation.triangulated_info, self.entries)
         self.solver.prepare_matrices()
@@ -85,12 +88,17 @@ class AppGUI:
         pprint.pprint(self.solver.boundary_matrices)
         print('-' * 100)
         #pprint.pprint(self.solver.K)
-        print('\n'.join(['\t\t'.join([str(cell) for cell in row]) for row in self.solver.K.round(3)]))
-        print('-' * 100)
-        pprint.pprint(self.solver.F)
-        print('-' * 100)
+        # print('\n'.join(['\t\t  '.join([str(cell) for cell in row]) for row in self.solver.K.round(3)]))
+        # print('-' * 100)
+        # pprint.pprint(self.solver.F)
+        # print('-' * 100)
         self.solution = np.linalg.solve(self.solver.K, self.solver.F)
+        print('-' * 100)
+        print("FEM solution : ")
         pprint.pprint(self.solution)
+
+
+
         filename = 'matrices.json'
         data = {}
         for key in self.solver.element_matrices:
@@ -222,6 +230,7 @@ class AppGUI:
     def _load_data(self):
         # open file dialog
         filepath = Tk.filedialog.askopenfilename(title="Select file", filetypes=(("json files", "*.json"), ("all files", "*.*")))
+        print(filepath)
         if filepath is not None:
             self.fig.clear()  # clear everything that was drawn before
 
