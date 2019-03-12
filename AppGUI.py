@@ -98,10 +98,11 @@ class AppGUI:
         print("FEM solution : ")
         pprint.pprint(self.solution)
 
-        self.tester = Tester(self.solution, self.entries, self.delaunay_triangulation.triangulated_info)
+        self.tester = Tester(self.solution, self.entries, self.delaunay_triangulation, self.solver)
         print("L2:")
         print("absolute error: ", self.tester.get_abs_error_L2())
         print("relative error: ", self.tester.get_relative_error_L2())
+        self.tester.derivative()
 
 
         filename = 'matrices.json'
