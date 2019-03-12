@@ -24,6 +24,7 @@ import plot
 from helpers import read_json
 from DelaunayTriangulation import DelaunayTriangulation
 from fem_solver import FemSolver
+from tester import Tester
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 
@@ -97,6 +98,10 @@ class AppGUI:
         print("FEM solution : ")
         pprint.pprint(self.solution)
 
+        self.tester = Tester(self.solution, self.entries, self.delaunay_triangulation.triangulated_info)
+        print("L2:")
+        print("absolute error: ", self.tester.get_abs_error_L2())
+        print("relative error: ", self.tester.get_relative_error_L2())
 
 
         filename = 'matrices.json'
