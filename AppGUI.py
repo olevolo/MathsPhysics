@@ -98,22 +98,23 @@ class AppGUI:
         print("FEM solution : ")
         pprint.pprint(self.solution)
 
-        self.tester = Tester(self.solution, self.entries, self.delaunay_triangulation, self.solver)
+        self.tester = Tester(self.solution, self.entries, self.delaunay_triangulation, self.solver, width=2)
         print("L2:")
         print("absolute error: ", self.tester.get_abs_error_L2())
         print("relative error: ", self.tester.get_relative_error_L2())
-        self.tester.derivative()
+        print("absolute error: ", self.tester.get_abs_error_W2())
+        print("relative error: ", self.tester.get_relative_error_W2())
 
 
-        filename = 'matrices.json'
-        data = {}
-        for key in self.solver.element_matrices:
-            inner_data = {}
-            for subkey in self.solver.element_matrices[key]:
-                inner_data[subkey] = self.solver.element_matrices[key][subkey].tolist()
-            data[key] = inner_data
+        # filename = 'matrices.json'
+        # data = {}
+        # for key in self.solver.element_matrices:
+        #     inner_data = {}
+        #     for subkey in self.solver.element_matrices[key]:
+        #         inner_data[subkey] = self.solver.element_matrices[key][subkey].tolist()
+        #     data[key] = inner_data
+        # self._write(filename, data)
 
-        self._write(filename, data)
         self._3Dplot()
 
     def getRandomColor(self):
