@@ -96,13 +96,26 @@ class AppGUI:
         self.solution = np.linalg.solve(self.solver.K, self.solver.F)
         print('-' * 100)
         print("FEM solution : ")
-        pprint.pprint(self.solution)
+        print(self.solution)
 
         self.tester = Tester(self.solution, self.entries, self.delaunay_triangulation, self.solver)
+        print("Exact solution : ")
+        pprint.pprint(self.tester.get_exact_soluton())
+        print()
+        print("n: ", self.tester.n)
         print("L2:")
-        print("absolute error: ", self.tester.get_abs_error_L2())
-        print("relative error: ", self.tester.get_relative_error_L2())
+        print("absolute error: ")
+        print(np.sum(self.tester.get_abs_error_L2()) / self.tester.n)
+        #pprint.pprint(self.tester.get_abs_error_L2())
+        print("relative error: ")
+        pprint.pprint(self.tester.get_relative_error_L2())
+
         self.tester.derivative()
+        print("W2:")
+        print("absolute error: ")
+        #print(np.sum(self.tester.get_abs_error_W2()) / self.tester.n)
+        print("relative error: ")
+        #pprint.pprint(self.tester.get_relative_error_W2())
 
 
         filename = 'matrices.json'
@@ -183,11 +196,11 @@ class AppGUI:
         a_row = Tk.Frame(self.cond_window)
         Tk.Label(a_row, width=22, text='a11 :', anchor='w').pack(side=Tk.LEFT)
         a11_ent = Tk.Entry(a_row)
-        a11_ent.insert(0, "1")
+        a11_ent.insert(0, "4")
         a11_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         Tk.Label(a_row, width=22, text='a22 :', anchor='w').pack(side=Tk.LEFT)
         a22_ent = Tk.Entry(a_row)
-        a22_ent.insert(0, "1")
+        a22_ent.insert(0, "3")
         a22_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         a_row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
 
@@ -197,11 +210,11 @@ class AppGUI:
         fd_row = Tk.Frame(self.cond_window)
         Tk.Label(fd_row, width=22, text='f :', anchor='w').pack(side=Tk.LEFT)
         f_ent = Tk.Entry(fd_row)
-        f_ent.insert(0, "1")
+        f_ent.insert(0, "7")
         f_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         Tk.Label(fd_row, width=22, text='d :', anchor='w').pack(side=Tk.LEFT)
         d_ent = Tk.Entry(fd_row)
-        d_ent.insert(0, "1")
+        d_ent.insert(0, "0")
         d_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         fd_row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
 
@@ -224,7 +237,7 @@ class AppGUI:
             params = {}
             for key in fields:
                 ent = Tk.Entry(row)
-                ent.insert(0, "1")
+                ent.insert(0, "0.00001")
                 ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
                 params[key] = ent
 
