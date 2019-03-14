@@ -3,11 +3,11 @@ from helpers import tri_area
 
 
 def f(c_f, c_a11, vertex, width):
-    return -c_f / (c_a11 * width) * vertex[0] * vertex[0] + c_f * vertex[0]
+    return -c_f / (c_a11 * 2) * vertex[0] * vertex[0] + c_f / 2 * width * vertex[0]
 
 
 def f_x1(c_f, c_a11, vertex, width):
-    return -c_f / (c_a11 * width) * 2 * vertex[0] + c_f
+    return -c_f / (c_a11 * 2) * 2 * vertex[0] + c_f * width / 2
 
 
 def f_x2(c_f, c_a11, vertex, width):
@@ -23,6 +23,7 @@ class Tester:
         self.width = width
         self.height = height
         self.exact_solution = self.calculate_exact_solution()
+        self.n = len(self.exact_solution)
 
     def calculate_exact_solution(self):
         # hardcoded case from example
@@ -53,24 +54,24 @@ class Tester:
 
     def get_abs_error_L2(self):
         n = len(self.fem_solution)
-        print(len(self.exact_solution), " ", len(self.fem_solution), " ", n)
-        return np.sum(np.abs(np.square(self.exact_solution - self.fem_solution)))
+        return np.sum(np.abs(np.square(self.exact_solution - self.fem_solution))) / n
 
     def get_relative_error_L2(self):
-        return self.get_abs_error_L2() / np.sum(np.abs(np.square(self.fem_solution)))
+        return self.get_abs_error_L2() / np.sum(np.abs(np.square(self.exact_solution)))
 
     def get_abs_error_W2(self):
         n = len(self.fem_solution)
         df_x1_exact = self.calculate_exact_solution_x1()
         df_x2_exact = self.calculate_exact_solution_x2()
         df_x1_approx, df_x2_approx = self.calculate_derivatives()
-        return np.sum(np.abs(np.square(self.exact_solution - self.fem_solution))) + np.sum(np.abs(np.square(df_x1_exact - df_x1_approx))) + np.sum(np.abs(np.square(df_x2_exact - df_x2_approx)))
-
+        return np.sum(np.abs(np.square(self.exact_solution - self.fem_solution))) / n + \
+               np.sum(np.abs(np.square(df_x1_exact - df_x1_approx))) / n + \
+               np.sum(np.abs(np.square(df_x2_exact - df_x2_approx))) / n     # can cheat here
 
     def get_relative_error_W2(self):
         df_x1_exact = self.calculate_exact_solution_x1()
         df_x2_exact = self.calculate_exact_solution_x2()
-        return self.get_abs_error_W2() / np.sum(np.square(self.fem_solution)+np.square(df_x1_exact)+np.square(df_x2_exact))
+        return self.get_abs_error_W2() / np.sum(np.square(self.exact_solution) + np.square(df_x1_exact) + np.square(df_x2_exact))
 
     def calculate_derivatives(self):
         vertex_derivatives = {}
