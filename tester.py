@@ -3,16 +3,32 @@ from helpers import tri_area
 
 
 def f(c_f, c_a11, vertex, width):
-    return -c_f / (c_a11 * 2) * vertex[0] * vertex[0] + c_f / 2 * width * vertex[0]
+    return (c_f / (2 * c_a11)) * vertex[0] * (width - vertex[0])
 
 
 def f_x1(c_f, c_a11, vertex, width):
-    return -c_f / (c_a11 * 2) * 2 * vertex[0] + c_f * width / 2
+    return (c_f / (2 * c_a11)) * width - c_f * vertex[0]
 
 
 def f_x2(c_f, c_a11, vertex, width):
     return 0
 
+def u(c_f, c_a11, c_d, vertex, width):
+    degree = np.sqrt(3.0 / 5)
+    return (2.0 / 3) * ( np.power(np.e, -degree * width) - 1) / ( np.power(np.e, degree * width) - np.power(np.e, -degree * width) ) \
+           * np.power(np.e, degree * vertex[0]) + \
+           -(2.0 / 3) * (1 + ( np.power(np.e, -degree * width) - 1) / ( np.power(np.e, degree * width) - np.power(np.e, -degree * width) )) \
+           * np.power(np.e, -degree * vertex[0]) \
+           + c_f / c_d
+
+def u_x1(c_f, c_a11, c_d, vertex, width):
+    degree = np.sqrt(3.0 / 5)
+    return degree * (2.0 / 3) * (np.power(np.e, -degree * width) - 1) / (
+                np.power(np.e, degree * width) - np.power(np.e, -degree * width)) \
+           * np.power(np.e, degree * vertex[0]) + \
+           degree * (2.0 / 3) * (1 + (np.power(np.e, -degree * width) - 1) / (
+                np.power(np.e, degree * width) - np.power(np.e, -degree * width))) \
+           * np.power(np.e, -degree * vertex[0])
 
 class Tester:
     def __init__(self, fem_solution, conds, delaunay_triangulation, fem_solver, width=0, height=0):
@@ -31,6 +47,7 @@ class Tester:
         exact_solution = []
         for i in range(len(vertices)):
             exact_solution.append(f(self.conds['f'], self.conds['a11'], vertices[i], self.width))
+            #exact_solution.append(u(self.conds['f'], self.conds['a11'], self.conds['d'], vertices[i], self.width))
             # exact_solution.append(self.conds['f'] / self.conds['a11'] * vertices[i][0] / 2 * (self.width - vertices[i][0]))
         return np.array(exact_solution).reshape((len(exact_solution), 1))
 
@@ -40,6 +57,7 @@ class Tester:
         exact_solution_x1 = []
         for i in range(len(vertices)):
             exact_solution_x1.append(f_x1(self.conds['f'], self.conds['a11'], vertices[i], self.width))
+            #exact_solution_x1.append(u_x1(self.conds['f'], self.conds['a11'], self.conds['d'], vertices[i], self.width))
             # exact_solution.append(self.conds['f'] / self.conds['a11'] * vertices[i][0] / 2 * (self.width - vertices[i][0]))
         return np.array(exact_solution_x1).reshape((len(exact_solution_x1), 1))
 
