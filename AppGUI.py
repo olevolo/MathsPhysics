@@ -54,7 +54,7 @@ class AppGUI:
 
         self.menubar = Tk.Menu(self.root)
         self.filemenu = Tk.Menu(self.menubar, tearoff=0)
-        self.filemenu.add_command(label="Load data", command=self._load_data)
+        self.filemenu.add_command(label="Load input", command=self._load_data)
         self.filemenu.add_command(label="Triangulate", command=self._triangulate)
         self.filemenu.add_command(label="Compare", command=self._compare)
         self.filemenu.add_command(label="Set conditions", command=self._ask_conds)
@@ -112,13 +112,13 @@ class AppGUI:
 
 
         # filename = 'matrices.json'
-        # data = {}
+        # input = {}
         # for key in self.solver.element_matrices:
         #     inner_data = {}
         #     for subkey in self.solver.element_matrices[key]:
         #         inner_data[subkey] = self.solver.element_matrices[key][subkey].tolist()
-        #     data[key] = inner_data
-        # self._write(filename, data)
+        #     input[key] = inner_data
+        # self._write(filename, input)
 
         self._3Dplot()
 
@@ -249,7 +249,7 @@ class AppGUI:
             data = read_json(filepath)
             self.delaunay_triangulation = DelaunayTriangulation(**data)
 
-            # display data in the text field
+            # display input in the text field
             self._print_info(data)
 
             # plot the domain
@@ -268,7 +268,7 @@ class AppGUI:
 
     def _print_info(self, data):
         self.text.delete('1.0', Tk.END)
-        pretty_data = pprint.pformat(data)  # pretty format data before printing
+        pretty_data = pprint.pformat(data)  # pretty format input before printing
         self.text.insert(Tk.END, pretty_data)
 
     def _quit(self):

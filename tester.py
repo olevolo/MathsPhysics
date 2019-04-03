@@ -72,7 +72,7 @@ class Tester:
 
     def get_abs_error_L2(self):
         n = len(self.fem_solution)
-        return np.sum(np.abs(np.square(self.exact_solution - self.fem_solution))) / n
+        return np.sum(np.abs(np.square(self.exact_solution - self.fem_solution)))
 
     def get_relative_error_L2(self):
         return self.get_abs_error_L2() / np.sum(np.abs(np.square(self.exact_solution)))
@@ -83,8 +83,7 @@ class Tester:
         df_x2_exact = self.calculate_exact_solution_x2()
         df_x1_approx, df_x2_approx = self.calculate_derivatives()
         return np.sum(np.abs(np.square(self.exact_solution - self.fem_solution))) / n + \
-               np.sum(np.abs(np.square(df_x1_exact - df_x1_approx))) / n + \
-               np.sum(np.abs(np.square(df_x2_exact - df_x2_approx))) / n     # can cheat here
+               np.sum(np.abs(np.square(df_x2_exact - df_x2_approx)))     # can cheat here
 
     def get_relative_error_W2(self):
         df_x1_exact = self.calculate_exact_solution_x1()
@@ -118,5 +117,8 @@ class Tester:
             derivatives_x1[int(k), 0] = np.average(np.array(v[0]))
             derivatives_x2[int(k), 0] = np.average(np.array(v[1]))
 
-        return derivatives_x1, derivatives_x2
+        return derivatives_x1,
+
+    def p(self):
+        return None
 

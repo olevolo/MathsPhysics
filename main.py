@@ -58,7 +58,7 @@ class Application:
 
         self.menubar = Tk.Menu(self.root)
         self.filemenu = Tk.Menu(self.menubar, tearoff=0)
-        self.filemenu.add_command(label="Load data", command=self.load_data)
+        self.filemenu.add_command(label="Load input", command=self.load_data)
         self.filemenu.add_command(label="Triangulate", command=self.triangulate)
         self.filemenu.add_command(label="Compare", command=self.compare)
         self.filemenu.add_separator()
@@ -89,7 +89,7 @@ class Application:
         if self.filepath is not None:
             self.fig.clear()  # clear everything that was drawn before
 
-            # read data
+            # read input
             self.data = self.read_data()
             self.angle = self.data.get('angle')
             self.area = self.data.get('area')
@@ -98,7 +98,7 @@ class Application:
             self.labels = True if self.data.get('labels') else False
             self.number_triangles = True if self.data.get('number_triangles') else False
 
-            # display data in the text field
+            # display input in the text field
             self._print_info(self.data)
 
 
@@ -124,7 +124,7 @@ class Application:
 
     def _print_info(self, data):
         self.text.delete('1.0', Tk.END)
-        pretty_data = pprint.pformat(data)  # pretty format data before printing
+        pretty_data = pprint.pformat(data)  # pretty format input before printing
         self.text.insert(Tk.END, pretty_data)
 
     def _quit(self):
