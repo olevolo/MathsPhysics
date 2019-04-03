@@ -193,7 +193,7 @@ class AppGUI:
         a11_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         Tk.Label(a_row, width=22, text='a22 :', anchor='w').pack(side=Tk.LEFT)
         a22_ent = Tk.Entry(a_row)
-        a22_ent.insert(0, "3")
+        a22_ent.insert(0, "0.000001")
         a22_ent.pack(side=Tk.LEFT, expand=Tk.YES, fill=Tk.X)
         a_row.pack(side=Tk.TOP, fill=Tk.X, padx=5, pady=5)
 
