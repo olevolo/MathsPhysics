@@ -1,0 +1,98 @@
+"max_area": 0.002
+n:  814
+L2:
+absolute error:  2.3679259349549738e-05
+relative error:  4.542846442922841e-09
+W2:
+absolute error:  0.01953793760549969
+relative error:  1.0265070584455199e-06
+
+"max_area": 0.004
+n:  416
+L2:
+absolute error:  5.928553282434312e-05
+relative error:  2.2138514550659558e-08
+W2:
+absolute error:  0.04496961097086246
+relative error:  4.6241565756073246e-06
+
+"max_area": 0.02
+n:  86
+L2:
+absolute error:  0.000923088125740964
+relative error:  1.6981918544588947e-06
+W2:
+absolute error:  0.3404403969668154
+relative error:  0.00016388877419155608
+
+0.2
+n:  14
+L2:
+absolute error:  0.02098253021533279
+relative error:  0.00030095542897063825
+W2:
+absolute error:  1.354587493461023
+relative error:  0.003164685762891337
+
+"max_area": 0.1
+n:  23
+L2:
+absolute error:  0.003877831213248613
+relative error:  3.0233658535284846e-05
+W2:
+absolute error:  0.7584244711015937
+relative error:  0.0012151947497106785
+
+
+"max_area": 0.05
+n:  42
+L2:
+absolute error:  0.0020728086708908466
+relative error:  8.540346497468067e-06
+W2:
+absolute error:  0.6208934994325599
+relative error:  0.0005601047442148225
+
+"max_area": 0.025
+n:  72
+L2:
+absolute error:  0.0009843733807319596
+relative error:  2.257337245032479e-06
+W2:
+absolute error:  0.19853083664668902
+relative error:  0.00011065528040710635
+
+
+max_area: 0.0125
+n:  141
+L2:
+absolute error:  0.00020387945778997126
+relative error:  2.3142878891685088e-07
+W2:
+absolute error:  0.10345234565273223
+relative error:  3.029043587391798e-05
+
+p(0.0009843733807319596, 0.00020387945778997126)
+Out[15]: 2.2714892236283886
+p(0.19853083664668902,0.10345234565273223)
+Out[16]: 0.9403967533731313
+
+max_area: 0.0675
+n:  250
+L2:
+absolute error:  8.696220406567263e-05
+relative error:  5.566325815127117e-08
+W2:
+absolute error:  0.06056155344767739
+relative error:  1.0143251689238569e-05
+
+
+"max_area": 0.003375
+n:  492
+L2:
+absolute error:  4.7759939230333205e-05
+relative error:  1.535792932495606e-08
+W2:
+absolute error:  0.0416301635876717
+relative error:  3.5712962219378274e-06
+
