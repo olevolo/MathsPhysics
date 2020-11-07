@@ -1,11 +1,10 @@
 # MathsPhysics
 
 ## Instructions 
-1. Install python3.6.5
-2. Install PyCharm
-3. Configure PyCharm
-4. Clone the project 
-5. Navigate to the project's folder in the terminal
-6. Run 'pip install -r requirements.txt'
-7. Open PyCharm and run 'main.py'
-8. Window with plots should appear on the screen
+1. Install python 3.6 or higher
+2. Install and configure PyCharm
+3. Clone the project 
+4. Navigate to the project's folder in the terminal
+5. Run 'pip install -r requirements.txt'
+6. Open PyCharm and run 'application.py'
+7. Window with plots should appear on the screen
